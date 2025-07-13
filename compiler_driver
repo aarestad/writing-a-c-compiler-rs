@@ -1,0 +1,16 @@
+#!/usr/bin/arch -x86_64 zsh
+
+input_file=$1
+input_file_base=${input_file%.*}
+preprocessed="$input_file_base".i
+compiled="$input_file_base".s
+assembled=$input_file_base
+
+gcc -E -P "$input_file" -o "$preprocessed"
+
+# TODO compile!
+# cargo run nqcc $preprocessed -o $compiled
+# rm "$preprocessed"
+
+gcc "$compiled" -o "$assembled"
+rm "$compiled"

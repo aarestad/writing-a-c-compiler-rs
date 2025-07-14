@@ -1,8 +1,6 @@
 #!/usr/bin/arch -x86_64 zsh
 
-set -euxo pipefail
-
-#!/bin/bash
+set -euo pipefail
 
 POSITIONAL_ARGS=()
 
@@ -37,11 +35,12 @@ assembled=$input_file_base
 
 gcc -E -P "$input_file" -o "$preprocessed"
 
-if ! cargo run "$preprocessed" --lex -o "$compiled"; then
-  exit $?
-fi
+cargo run "$preprocessed" -o "$compiled"
+lex_ret=$?
 
-rm "$preprocessed"
+if ! $lex_ret; then
+  exit $lex_ret
+fi
 
 if $lex_only; then
   exit 0

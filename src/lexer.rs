@@ -3,7 +3,9 @@ use logos::{Lexer, Logos};
 fn valid_constant(lex: &mut Lexer<Nqc>) -> Option<u64> {
     let n: u64 = lex.slice().parse().ok()?;
 
-    if !lex.remainder().chars().next()?.is_whitespace() {
+    let lookahead = lex.remainder().chars().next()?;
+
+    if !(lookahead.is_whitespace() || lookahead == ';') {
         return None;
     }
 

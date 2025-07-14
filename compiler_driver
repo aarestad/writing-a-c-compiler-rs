@@ -4,6 +4,10 @@ set -euo pipefail
 
 POSITIONAL_ARGS=()
 
+lex_only=false
+parse_only=false
+codegen_only=false
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     --lex)
@@ -11,10 +15,12 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     ---parse)
+      # shellcheck disable=SC2034
       parse_only=true
       shift
       ;;
     --codegen)
+      # shellcheck disable=SC2034
       codegen_only=true
       shift
       ;;
@@ -38,11 +44,11 @@ gcc -E -P "$input_file" -o "$preprocessed"
 cargo run "$preprocessed" -o "$compiled"
 lex_ret=$?
 
-if ! $lex_ret; then
+if (( lex_ret != 0)); then
   exit $lex_ret
 fi
 
-if $lex_only; then
+if [ $lex_only = "true" ]; then
   exit 0
 fi
 

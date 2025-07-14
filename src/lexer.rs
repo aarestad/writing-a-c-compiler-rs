@@ -1,18 +1,25 @@
 use logos::{Lexer, Logos};
 
-fn valid_constant(lex: &mut Lexer<Nqc>) -> Option<u64> {
-    let n: u64 = lex.slice().parse().ok()?;
+type LexError = String;
 
-    let lookahead = lex.remainder().chars().next()?;
+fn valid_constant(lex: &mut Lexer<Nqc>) -> Result<u64, LexError> {
+    match lex.slice().parse() {
+        Ok(n) => {
+            if let Some(lookahead) = lex.remainder().chars().next() {
+                if !(lookahead.is_whitespace() || lookahead == ';') {
+                    return Err("next char is not whitespace or semicolon".into());
+                }
+            }
 
-    if !(lookahead.is_whitespace() || lookahead == ';') {
-        return None;
+            Ok(n)
+        },
+
+        Err(_) => Err("invalid constant number".into()),
     }
-
-    Some(n)
 }
 
 #[derive(Logos, Debug, PartialEq)]
+#[logos(error = LexError)]
 #[logos(skip r"[ \t\n\f]+")]
 pub(crate) enum Nqc {
     #[regex("[a-zA-Z_]\\w*", |lex| lex.slice().parse().ok())]
@@ -79,7 +86,7 @@ mod test {
             Ok(Nqc::ClosedParen),
             Ok(Nqc::OpenBrace),
             Ok(Nqc::Return),
-            Err(()),
+            Err("next char is not whitespace or semicolon".into()),
             Ok(Nqc::Text("abc".to_string())),
             Ok(Nqc::Semicolon),
             Ok(Nqc::ClosedBrace),

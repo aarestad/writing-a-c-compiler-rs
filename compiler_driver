@@ -1,5 +1,34 @@
 #!/usr/bin/arch -x86_64 zsh
 
+set -euxo pipefail
+
+#!/bin/bash
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --lex)
+      lex_only=true
+      shift
+      ;;
+    ---parse)
+      parse_only=true
+      shift
+      ;;
+    --codegen)
+      codegen_only=true
+      shift
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+set -- "${POSITIONAL_ARGS[@]}"
+
 input_file=$1
 input_file_base=${input_file%.*}
 preprocessed="$input_file_base".i
@@ -8,9 +37,15 @@ assembled=$input_file_base
 
 gcc -E -P "$input_file" -o "$preprocessed"
 
-# TODO compile!
-# cargo run nqcc $preprocessed -o $compiled
-# rm "$preprocessed"
+if ! cargo run "$preprocessed" --lex -o "$compiled"; then
+  exit $?
+fi
+
+rm "$preprocessed"
+
+if $lex_only; then
+  exit 0
+fi
 
 gcc "$compiled" -o "$assembled"
 rm "$compiled"

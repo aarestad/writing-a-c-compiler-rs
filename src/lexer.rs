@@ -1,8 +1,8 @@
-use logos::{Logos, Lexer};
+use logos::Logos;
 
 #[derive(Logos, Debug, PartialEq)]
 #[logos(skip r"[ \t\n\f]+")]
-pub(crate) enum NQC {
+pub(crate) enum Nqc {
     #[regex("[a-zA-Z_]\\w*")]
     Text,
 
@@ -32,8 +32,4 @@ pub(crate) enum NQC {
 
     #[token(";")]
     Semicolon,
-}
-
-pub(crate) fn lexer(input: &str) -> Lexer<NQC> {
-    NQC::lexer(input)
 }

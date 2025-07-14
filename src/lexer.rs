@@ -9,9 +9,11 @@ fn valid_constant(lex: &mut Lexer<Nqc>) -> Result<u64, LexError> {
                 if !(lookahead.is_whitespace() || lookahead == ';') {
                     return Err("next char is not whitespace or semicolon".into());
                 }
-            }
 
-            Ok(n)
+                Ok(n)
+            } else {
+                Err("unexpected eof".into())
+            }
         },
 
         Err(_) => Err("invalid constant number".into()),

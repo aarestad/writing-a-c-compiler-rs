@@ -7,12 +7,12 @@ mod lexer;
 mod parser;
 
 fn main() -> Result<(), String> {
-    let filename = env::args().nth(1).or(Some("samples/return_2.c".into())).unwrap();
+    let filename = env::args().nth(1).unwrap_or("samples/return_2.c".into());
     let src = fs::read_to_string(&filename)
         .unwrap_or_else(|_| panic!("Failed to read file {}", &filename));
 
     let tokens = NqcToken::lexer(&src).collect::<Vec<_>>();
-    println!("{:?}", tokens);
+    println!("{tokens:?}");
 
     let ast = parse(tokens);
     println!("{:?}", ast?);

@@ -1,4 +1,3 @@
-use logos::Logos;
 use crate::lexer::{LexError, NqcToken};
 
 #[derive(Debug, PartialEq)]

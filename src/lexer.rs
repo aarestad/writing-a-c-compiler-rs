@@ -1,8 +1,8 @@
 use logos::{Lexer, Logos};
 
-type LexError = String;
+pub(crate) type LexError = String;
 
-fn valid_constant(lex: &mut Lexer<Nqc>) -> Result<u64, LexError> {
+fn valid_constant(lex: &mut Lexer<NqcToken>) -> Result<u64, LexError> {
     match lex.slice().parse() {
         Ok(n) => {
             if let Some(lookahead) = lex.remainder().chars().next() {
@@ -20,10 +20,10 @@ fn valid_constant(lex: &mut Lexer<Nqc>) -> Result<u64, LexError> {
     }
 }
 
-#[derive(Logos, Debug, PartialEq)]
+#[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(error = LexError)]
 #[logos(skip r"[ \t\n\f]+")]
-pub(crate) enum Nqc {
+pub(crate) enum NqcToken {
     #[regex("[a-zA-Z_]\\w*", |lex| lex.slice().parse().ok())]
     Text(String),
 
@@ -57,41 +57,41 @@ pub(crate) enum Nqc {
 
 #[cfg(test)]
 mod test {
-    use super::Nqc;
+    use super::NqcToken;
     use logos::Logos;
 
     #[test]
     fn parse_return_two() {
         let src = "int main(void) {\n  return 2;\n}";
-        assert_eq!(Nqc::lexer(src).collect::<Vec<_>>(), vec![
-            Ok(Nqc::Int),
-            Ok(Nqc::Text("main".to_string())),
-            Ok(Nqc::OpenParen),
-            Ok(Nqc::Void),
-            Ok(Nqc::ClosedParen),
-            Ok(Nqc::OpenBrace),
-            Ok(Nqc::Return),
-            Ok(Nqc::Constant(2)),
-            Ok(Nqc::Semicolon),
-            Ok(Nqc::ClosedBrace),
+        assert_eq!(NqcToken::lexer(src).collect::<Vec<_>>(), vec![
+            Ok(NqcToken::Int),
+            Ok(NqcToken::Text("main".to_string())),
+            Ok(NqcToken::OpenParen),
+            Ok(NqcToken::Void),
+            Ok(NqcToken::ClosedParen),
+            Ok(NqcToken::OpenBrace),
+            Ok(NqcToken::Return),
+            Ok(NqcToken::Constant(2)),
+            Ok(NqcToken::Semicolon),
+            Ok(NqcToken::ClosedBrace),
         ]);
     }
 
     #[test]
     fn fails_on_2abc() {
         let src = "int main(void) {\n  return 2abc;\n}";
-        assert_eq!(Nqc::lexer(src).collect::<Vec<_>>(), vec![
-            Ok(Nqc::Int),
-            Ok(Nqc::Text("main".to_string())),
-            Ok(Nqc::OpenParen),
-            Ok(Nqc::Void),
-            Ok(Nqc::ClosedParen),
-            Ok(Nqc::OpenBrace),
-            Ok(Nqc::Return),
+        assert_eq!(NqcToken::lexer(src).collect::<Vec<_>>(), vec![
+            Ok(NqcToken::Int),
+            Ok(NqcToken::Text("main".to_string())),
+            Ok(NqcToken::OpenParen),
+            Ok(NqcToken::Void),
+            Ok(NqcToken::ClosedParen),
+            Ok(NqcToken::OpenBrace),
+            Ok(NqcToken::Return),
             Err("next char is not whitespace or semicolon".into()),
-            Ok(Nqc::Text("abc".to_string())),
-            Ok(Nqc::Semicolon),
-            Ok(Nqc::ClosedBrace),
+            Ok(NqcToken::Text("abc".to_string())),
+            Ok(NqcToken::Semicolon),
+            Ok(NqcToken::ClosedBrace),
         ]);
     }
 }

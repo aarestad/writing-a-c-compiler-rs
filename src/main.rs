@@ -1,12 +1,14 @@
-use std::{env, fs};
 use crate::lexer::NqcToken;
-use logos::Logos;
 use crate::parser::parse;
+use logos::Logos;
+use std::{env, fs};
+use crate::errors::CompilerError;
 
+mod errors;
 mod lexer;
 mod parser;
 
-fn main() -> Result<(), String> {
+fn main() -> Result<(), CompilerError> {
     let filename = env::args().nth(1).unwrap_or("samples/return_2.c".into());
     let src = fs::read_to_string(&filename)
         .unwrap_or_else(|_| panic!("Failed to read file {}", &filename));

@@ -14,8 +14,8 @@ fn main() -> Result<(), String> {
     let tokens = NqcToken::lexer(&src).collect::<Vec<_>>();
     println!("{tokens:?}");
 
-    let ast = parse(tokens);
-    println!("{:?}", ast?);
+    let ast = parse(tokens)?;
+    println!("{ast:?}");
 
     Ok(())
 }

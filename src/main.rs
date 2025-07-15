@@ -1,8 +1,8 @@
+use crate::errors::CompilerError;
 use crate::lexer::NqcToken;
 use crate::parser::parse;
 use logos::Logos;
 use std::{env, fs};
-use crate::errors::CompilerError;
 
 mod errors;
 mod lexer;

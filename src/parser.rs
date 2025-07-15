@@ -19,7 +19,9 @@ pub(crate) fn parse(tokens: Vec<TokenResult>) -> Result<NqcNode, CompilerError> 
 
         false
     }) else {
-        return Err(CompilerError::ParserError("could not find function name".into()));
+        return Err(CompilerError::ParserError(
+            "could not find function name".into(),
+        ));
     };
 
     let Ok(NqcToken::Text(fn_name)) = fn_result else {

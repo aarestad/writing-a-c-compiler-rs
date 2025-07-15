@@ -62,8 +62,8 @@ pub(crate) enum NqcToken {
 #[cfg(test)]
 mod test {
     use super::NqcToken;
-    use logos::Logos;
     use crate::errors::CompilerError;
+    use logos::Logos;
 
     #[test]
     fn parse_return_two() {
@@ -98,7 +98,9 @@ mod test {
                 Ok(NqcToken::ClosedParen),
                 Ok(NqcToken::OpenBrace),
                 Ok(NqcToken::Return),
-                Err(CompilerError::LexerError("next char is not whitespace or semicolon".into())),
+                Err(CompilerError::LexerError(
+                    "next char is not whitespace or semicolon".into()
+                )),
                 Ok(NqcToken::Text("abc".to_string())),
                 Ok(NqcToken::Semicolon),
                 Ok(NqcToken::ClosedBrace),

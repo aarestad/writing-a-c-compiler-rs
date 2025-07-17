@@ -1,7 +1,6 @@
 use crate::errors::CompilerError;
 use logos::{Lexer, Logos};
 
-pub(crate) type LexError = String;
 pub(crate) type TokenResult = Result<NqcToken, CompilerError>;
 
 fn valid_constant(lex: &mut Lexer<NqcToken>) -> Result<u64, CompilerError> {
